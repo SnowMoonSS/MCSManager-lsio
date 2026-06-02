@@ -13,6 +13,9 @@ on:
 jobs:
   build-web:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write 
 
     steps:
       - uses: actions/checkout@v4
@@ -52,8 +55,12 @@ jobs:
           build-args: |
             BUILDPLATFORM=linux/amd64
             MCSM_VERSION=${{ github.event.inputs.tag || github.event.client_payload.tag }}
+            
   build-daemon:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write 
     strategy:
       matrix:
         java_version: [8, 11, 17, 21]
