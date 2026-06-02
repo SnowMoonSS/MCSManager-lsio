@@ -9,6 +9,8 @@ on:
         type: string
   repository_dispatch:
     types: [release]
+  release:
+    types: [published]
 
 jobs:
   build-web:
@@ -28,8 +30,8 @@ jobs:
             name=ghcr.io/${{ github.repository_owner }}/mcsmanager-web
           tags: |
             type=raw,value=latest
-            type=semver,pattern={{version}},value=${{ github.event.inputs.tag || github.event.client_payload.tag }}
-            type=semver,pattern={{major}}.{{minor}},value=${{ github.event.inputs.tag || github.event.client_payload.tag }}
+            type=semver,pattern={{version}},value=${{ github.event.inputs.tag || github.event.client_payload.tag || github.ref_name }}
+            type=semver,pattern={{major}}.{{minor}},value=${{ github.event.inputs.tag || github.event.client_payload.tag || github.ref_name }}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -54,8 +56,8 @@ jobs:
           labels: ${{ steps.meta_web.outputs.labels }}
           build-args: |
             BUILDPLATFORM=linux/amd64
-            MCSM_VERSION=${{ github.event.inputs.tag || github.event.client_payload.tag }}
-            
+            MCSM_VERSION=${{ github.event.inputs.tag || github.event.client_payload.tag || github.ref_name }}
+
   build-daemon:
     runs-on: ubuntu-latest
     permissions:
@@ -77,8 +79,8 @@ jobs:
             name=ghcr.io/${{ github.repository_owner }}/mcsmanager-daemon-jdk${{ matrix.java_version }}
           tags: |
             type=raw,value=latest
-            type=semver,pattern={{version}},value=${{ github.event.inputs.tag || github.event.client_payload.tag }}
-            type=semver,pattern={{major}}.{{minor}},value=${{ github.event.inputs.tag || github.event.client_payload.tag }}
+            type=semver,pattern={{version}},value=${{ github.event.inputs.tag || github.event.client_payload.tag || github.ref_name }}
+            type=semver,pattern={{major}}.{{minor}},value=${{ github.event.inputs.tag || github.event.client_payload.tag || github.ref_name }}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -104,4 +106,4 @@ jobs:
           build-args: |
             BUILDPLATFORM=linux/amd64
             EMBEDDED_JAVA_VERSION=${{ matrix.java_version }}
-            MCSM_VERSION=${{ github.event.inputs.tag || github.event.client_payload.tag }}
+            MCSM_VERSION=${{ github.event.inputs.tag || github.event.client_payload.tag || github.ref_name }}
