@@ -36,6 +36,7 @@ jobs:
             type=raw,value=latest
             type=semver,pattern={{version}},value=${{ github.event.inputs.tag || github.event.client_payload.tag || github.ref_name }}
             type=semver,pattern={{major}}.{{minor}},value=${{ github.event.inputs.tag || github.event.client_payload.tag || github.ref_name }}
+            type=semver,pattern={{major}},value=${{ github.event.inputs.tag || github.event.client_payload.tag || github.ref_name }}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -87,6 +88,8 @@ jobs:
             type=semver,pattern={{version}},value=${{ github.event.inputs.tag || github.event.client_payload.tag || github.ref_name }},suffix=-jdk${{ matrix.java_version }},enable=${{ matrix.java_version != 'none' }}
             type=semver,pattern={{major}}.{{minor}},value=${{ github.event.inputs.tag || github.event.client_payload.tag || github.ref_name }},enable=${{ matrix.java_version == 'none' }}
             type=semver,pattern={{major}}.{{minor}},value=${{ github.event.inputs.tag || github.event.client_payload.tag || github.ref_name }},suffix=-jdk${{ matrix.java_version }},enable=${{ matrix.java_version != 'none' }}
+            type=semver,pattern={{major}},value=${{ github.event.inputs.tag || github.event.client_payload.tag || github.ref_name }},enable=${{ matrix.java_version == 'none' }}
+            type=semver,pattern={{major}},value=${{ github.event.inputs.tag || github.event.client_payload.tag || github.ref_name }},suffix=-jdk${{ matrix.java_version }},enable=${{ matrix.java_version != 'none' }}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
