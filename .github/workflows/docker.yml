@@ -22,8 +22,7 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: |
-            name=ghcr.io/${{ github.repository }}-web
-            name=githubyumao/mcsmanager-web,enable=${{ github.repository == 'MCSManager/MCSManager' }}
+            name=ghcr.io/${{ github.repository_owner }}/mcsmanager-web
           tags: |
             type=raw,value=latest
             type=semver,pattern={{version}},value=${{ github.event.inputs.tag || github.event.client_payload.tag }}
@@ -41,13 +40,6 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Login to DockerHub
-        if: ${{ github.repository == 'MCSManager/MCSManager' }}
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
       - name: Build and Push Web
         uses: docker/build-push-action@v6
@@ -74,10 +66,8 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: |
-            name=ghcr.io/${{ github.repository }}-daemon,enable=${{ matrix.java_version == 21 }}
-            name=githubyumao/mcsmanager-daemon,enable=${{ github.repository == 'MCSManager/MCSManager' && matrix.java_version == 21 }}
-            name=ghcr.io/${{ github.repository }}-daemon-jdk${{ matrix.java_version }}
-            name=githubyumao/mcsmanager-daemon-jdk${{ matrix.java_version }},enable=${{ github.repository == 'MCSManager/MCSManager' }}
+            name=ghcr.io/${{ github.repository_owner }}/mcsmanager-daemon,enable=${{ matrix.java_version == 21 }}
+            name=ghcr.io/${{ github.repository_owner }}/mcsmanager-daemon-jdk${{ matrix.java_version }}
           tags: |
             type=raw,value=latest
             type=semver,pattern={{version}},value=${{ github.event.inputs.tag || github.event.client_payload.tag }}
@@ -95,13 +85,6 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Login to DockerHub
-        if: ${{ github.repository == 'MCSManager/MCSManager' }}
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
       - name: Build and Push Daemon
         uses: docker/build-push-action@v6
