@@ -21,7 +21,7 @@ RUN apk add --no-cache \
 
 COPY --from=builder /src/production-code/web/ /opt/mcsmanager/web/
 
-COPY dockerfile/web/ /
+COPY web /
 
 EXPOSE 23333
 

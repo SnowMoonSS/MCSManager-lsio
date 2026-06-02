@@ -32,7 +32,7 @@ RUN apt-get update && apt-get install -y curl &&\
 
 COPY --from=builder /src/production-code/daemon/ /opt/mcsmanager/daemon/
 
-COPY dockerfile/daemon/ /
+COPY daemon /
 
 EXPOSE 24444
 
