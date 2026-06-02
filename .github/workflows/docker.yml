@@ -12,12 +12,13 @@ on:
   release:
     types: [published]
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   build-web:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write 
 
     steps:
       - uses: actions/checkout@v4
@@ -60,9 +61,6 @@ jobs:
 
   build-daemon:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write 
     strategy:
       matrix:
         java_version: [8, 11, 17, 21]
