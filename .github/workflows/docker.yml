@@ -31,7 +31,7 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: |
-            name=ghcr.io/${{ github.repository_owner }}/mcsmanager-web
+            name=ghcr.io/${{ github.repository }}-web
           tags: |
             type=raw,value=latest
             type=semver,pattern={{version}},value=${{ github.event.inputs.tag || github.event.client_payload.tag || github.ref_name }}
@@ -79,8 +79,8 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: |
-            name=ghcr.io/${{ github.repository_owner }}/mcsmanager-daemon,enable=${{ matrix.java_version == 21 }}
-            name=ghcr.io/${{ github.repository_owner }}/mcsmanager-daemon-jdk${{ matrix.java_version }}
+            name=ghcr.io/${{ github.repository }}-daemon,enable=${{ matrix.java_version == 21 }}
+            name=ghcr.io/${{ github.repository }}-daemon-jdk${{ matrix.java_version }}
           tags: |
             type=raw,value=latest
             type=semver,pattern={{version}},value=${{ github.event.inputs.tag || github.event.client_payload.tag || github.ref_name }}
