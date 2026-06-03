@@ -12,14 +12,14 @@ DOCKER_GID=${DOCKER_GID:-999}
 if getent group "$DOCKER_GID" >/dev/null 2>&1; then
     EXISTING_GROUP=$(getent group "$DOCKER_GID" | cut -d: -f1)
     echo "GID $DOCKER_GID already in use by group: $EXISTING_GROUP, adding abc to it"
-    addgroup abc "$EXISTING_GROUP"
+    usermod -aG "$EXISTING_GROUP" abc
 elif getent group docker >/dev/null 2>&1; then
     echo "docker group exists, adding abc to it"
-    addgroup abc docker
+    usermod -aG docker abc
 else
     echo "Creating docker group with GID=$DOCKER_GID"
-    addgroup -g "$DOCKER_GID" docker
-    addgroup abc docker
+    groupadd -g "$DOCKER_GID" docker
+    usermod -aG docker abc
 fi
 
 # permissions
