@@ -14,7 +14,7 @@ RUN chmod a+x ./install-dependents.sh &&\
     ./install-dependents.sh &&\
     ./build.sh
 
-FROM ghcr.io/linuxserver/baseimage-alpine:edge
+FROM ghcr.io/linuxserver/baseimage-alpine:3.23
 
 RUN apk add --no-cache \
     nodejs \
