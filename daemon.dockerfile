@@ -24,14 +24,15 @@ FROM ghcr.io/linuxserver/baseimage-debian:trixie
 ARG EMBEDDED_JAVA_VERSION
 
 RUN DEBIAN_FRONTEND=noninteractive \
-    apt-get update && apt-get install -y curl wget apt-transport-https gpg &&\
-    wget -qO - https://packages.adoptium.net/artifactory/api/gpg/key/public | gpg --dearmor | tee /etc/apt/trusted.gpg.d/adoptium.gpg > /dev/null &&\
-    echo "deb https://packages.adoptium.net/artifactory/deb $(awk -F= '/^VERSION_CODENAME/{print$2}' /etc/os-release) main" | tee /etc/apt/sources.list.d/adoptium.list &&\
+    apt-get update && apt-get install -y -no-install-recommends curl &&\
     curl -fsSL https://deb.nodesource.com/setup_24.x | bash &&\
-    apt-get update && apt-get install -y nodejs &&\
+    apt-get update && apt-get install -y -no-install-recommends nodejs &&\
     if [ "${EMBEDDED_JAVA_VERSION}" != "none" ] && [ -n "${EMBEDDED_JAVA_VERSION}" ]; then \
+      apt-get install -y --no-install-recommends wget apt-transport-https gpg &&\
+      wget -qO - https://packages.adoptium.net/artifactory/api/gpg/key/public | gpg --dearmor | tee /etc/apt/trusted.gpg.d/adoptium.gpg > /dev/null &&\
+      echo "deb https://packages.adoptium.net/artifactory/deb $(awk -F= '/^VERSION_CODENAME/{print$2}' /etc/os-release) main" | tee /etc/apt/sources.list.d/adoptium.list &&\
       mkdir -p /usr/share/man/man1 &&\
-      apt-get install -y "temurin-${EMBEDDED_JAVA_VERSION}-jre"; \
+      apt-get update && apt-get install -no-install-recommends -y "temurin-${EMBEDDED_JAVA_VERSION}-jre"; \
     fi &&\
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
