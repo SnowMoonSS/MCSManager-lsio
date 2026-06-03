@@ -83,13 +83,13 @@ jobs:
             ghcr.io/${{ github.repository_owner }}/mcsm-daemon
           tags: |
             type=raw,value=latest,enable=${{ matrix.java_version == 'none' }}
-            type=raw,value=latest,suffix=-jdk${{ matrix.java_version }},enable=${{ matrix.java_version != 'none' }}
+            type=raw,value=latest,suffix=-jre${{ matrix.java_version }},enable=${{ matrix.java_version != 'none' }}
             type=semver,pattern={{version}},value=${{ github.event.inputs.tag || github.event.client_payload.tag || github.ref_name }},enable=${{ matrix.java_version == 'none' }}
-            type=semver,pattern={{version}},value=${{ github.event.inputs.tag || github.event.client_payload.tag || github.ref_name }},suffix=-jdk${{ matrix.java_version }},enable=${{ matrix.java_version != 'none' }}
+            type=semver,pattern={{version}},value=${{ github.event.inputs.tag || github.event.client_payload.tag || github.ref_name }},suffix=-jre${{ matrix.java_version }},enable=${{ matrix.java_version != 'none' }}
             type=semver,pattern={{major}}.{{minor}},value=${{ github.event.inputs.tag || github.event.client_payload.tag || github.ref_name }},enable=${{ matrix.java_version == 'none' }}
-            type=semver,pattern={{major}}.{{minor}},value=${{ github.event.inputs.tag || github.event.client_payload.tag || github.ref_name }},suffix=-jdk${{ matrix.java_version }},enable=${{ matrix.java_version != 'none' }}
+            type=semver,pattern={{major}}.{{minor}},value=${{ github.event.inputs.tag || github.event.client_payload.tag || github.ref_name }},suffix=-jre${{ matrix.java_version }},enable=${{ matrix.java_version != 'none' }}
             type=semver,pattern={{major}},value=${{ github.event.inputs.tag || github.event.client_payload.tag || github.ref_name }},enable=${{ matrix.java_version == 'none' }}
-            type=semver,pattern={{major}},value=${{ github.event.inputs.tag || github.event.client_payload.tag || github.ref_name }},suffix=-jdk${{ matrix.java_version }},enable=${{ matrix.java_version != 'none' }}
+            type=semver,pattern={{major}},value=${{ github.event.inputs.tag || github.event.client_payload.tag || github.ref_name }},suffix=-jre${{ matrix.java_version }},enable=${{ matrix.java_version != 'none' }}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
