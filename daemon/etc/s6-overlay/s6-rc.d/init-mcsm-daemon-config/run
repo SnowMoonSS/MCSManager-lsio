@@ -24,9 +24,9 @@ fi
 
 # patch daemon for DooD (Docker-out-of-Docker): reverse-translate extraVolumes host paths
 # to container paths for mkdir, then use original host paths as Docker bind mount source
-if [ -x /usr/bin/mcsm-patch-dind ]; then
+if [ -x /usr/local/bin/mcsm-patch-dind ]; then
     echo "[mcsm-patch] Applying DooD extraVolumes reverse translation..."
-    node /usr/bin/mcsm-patch-dind
+    node /usr/local/bin/mcsm-patch-dind
 fi
 
 # permissions
