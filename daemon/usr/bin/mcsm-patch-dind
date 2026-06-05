@@ -1,0 +1,29 @@
+#!/usr/bin/env node
+// Patch app.js: extraVolumes DooD (Docker-out-of-Docker) reverse path translation
+const fs = require("fs");
+const APP = "/opt/mcsmanager/daemon/app.js";
+let c = fs.readFileSync(APP, "utf8");
+
+const OLD = `for (const v of extraBinds) {
+            const hostPath = await instance.parseTextParams(v.hostPath);
+            if (!fs_extra_1.default.existsSync(hostPath))
+                fs_extra_1.default.mkdirsSync(hostPath);`;
+
+const NEW = `for (const v of extraBinds) {
+            const hostPath = await instance.parseTextParams(v.hostPath);
+            if (hostRealPath && hostPath.startsWith(hostRealPath)) {
+                const containerRealPath = path_1.default.normalize(path_1.default.join(defaultInstanceDir, hostPath.slice(hostRealPath.length)));
+                if (!fs_extra_1.default.existsSync(containerRealPath))
+                    fs_extra_1.default.mkdirsSync(containerRealPath);
+            } else if (!fs_extra_1.default.existsSync(hostPath))
+                fs_extra_1.default.mkdirsSync(hostPath);`;
+
+if (c.includes(OLD)) {
+  c = c.replace(OLD, NEW);
+  fs.writeFileSync(APP, c);
+  console.log("[mcsm-patch] extraVolumes DooD translation patched");
+} else if (c.includes("hostRealPath && hostPath.startsWith")) {
+  console.log("[mcsm-patch] already patched, skipping");
+} else {
+  console.log("[mcsm-patch] WARNING: pattern not found, patch may need update");
+}
