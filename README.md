@@ -17,7 +17,7 @@ MCSManager（简称 MCSM）是一款快速部署、分布式架构、多用户�
 
 | 组件 | 基础镜像 | 说明 |
 |------|----------|------|
-| **Web 面板** (`mcsm-web`) | `ghcr.io/linuxserver/baseimage-alpine:3.23` | 基于 Alpine Linux，极致轻量 |
+| **Web 面板** (`mcsm-web`) | `ghcr.io/linuxserver/baseimage-alpine:3.24` | 基于 Alpine Linux，极致轻量 |
 | **Daemon 守护进程** (`mcsm-daemon`) | `ghcr.io/linuxserver/baseimage-debian:trixie` | 基于 Debian，兼容性更好（内置 JRE 支持） |
 
 ---
@@ -108,7 +108,7 @@ MCSManager 官方提供 Docker 镜像，源自主仓库 `dockerfile/` 目录下�
 
 | 方面 | 本项目（MCSManager-lsio） | 官方 Docker 镜像 |
 |------|---------------------------|-------------------|
-| **Web 基础镜像** | `ghcr.io/linuxserver/baseimage-alpine:3.23` | `node:lts-alpine` |
+| **Web 基础镜像** | `ghcr.io/linuxserver/baseimage-alpine:3.24` | `node:lts-alpine` |
 | **Daemon 基础镜像** | `ghcr.io/linuxserver/baseimage-debian:trixie` | `eclipse-temurin:${VER}-jdk`（Debian 系） |
 | **内置 init 系统** | s6-overlay | 无（直接 `CMD node app.js`） |
 | **镜像来源** | LSIO 官方维护、持续更新 | Docker 官方 & Eclipse Temurin 官方 |
@@ -305,21 +305,21 @@ services:
 ### Web 镜像
 ```bash
 docker build -f web.dockerfile \
-  --build-arg MCSM_VERSION=v10.16.1 \
+  --build-arg MCSM_VERSION=v10.16.2 \
   -t mcsm-web:local .
 ```
 
 ### Daemon 镜像（默认无 JRE）
 ```bash
 docker build -f daemon.dockerfile \
-  --build-arg MCSM_VERSION=v10.16.1 \
+  --build-arg MCSM_VERSION=v10.16.2 \
   -t mcsm-daemon:local .
 ```
 
 ### Daemon 镜像（JRE 21）
 ```bash
 docker build -f daemon.dockerfile \
-  --build-arg MCSM_VERSION=v10.16.1 \
+  --build-arg MCSM_VERSION=v10.16.2 \
   --build-arg EMBEDDED_JAVA_VERSION=21 \
   -t mcsm-daemon:local-jre21 .
 ```
