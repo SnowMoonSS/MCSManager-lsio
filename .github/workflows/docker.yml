@@ -32,6 +32,7 @@ jobs:
         with:
           images: |
             name=ghcr.io/${{ github.repository_owner }}/mcsm-web
+            ${{ secrets.DOCKERHUB_USERNAME }}/mcsm-web
           tags: |
             type=raw,value=latest
             type=semver,pattern={{version}},value=${{ github.event.inputs.tag || github.event.client_payload.tag || github.ref_name }}
@@ -50,6 +51,12 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and Push Web
         uses: docker/build-push-action@v6
@@ -78,6 +85,7 @@ jobs:
         with:
           images: |
             ghcr.io/${{ github.repository_owner }}/mcsm-daemon
+            ${{ secrets.DOCKERHUB_USERNAME }}/mcsm-daemon
           tags: |
             type=raw,value=latest
             type=semver,pattern={{version}},value=${{ github.event.inputs.tag || github.event.client_payload.tag || github.ref_name }}
@@ -96,6 +104,12 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and Push Daemon
         uses: docker/build-push-action@v6
@@ -130,6 +144,7 @@ jobs:
             latest=false
           images: |
             ghcr.io/${{ github.repository_owner }}/mcsm-daemon
+            ${{ secrets.DOCKERHUB_USERNAME }}/mcsm-daemon
           tags: |
             type=raw,value=latest,suffix=-jre${{ matrix.java_version }}
             type=semver,pattern={{version}},value=${{ github.event.inputs.tag || github.event.client_payload.tag || github.ref_name }},suffix=-jre${{ matrix.java_version }}
@@ -148,6 +163,12 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and Push Daemon JRE
         uses: docker/build-push-action@v6
