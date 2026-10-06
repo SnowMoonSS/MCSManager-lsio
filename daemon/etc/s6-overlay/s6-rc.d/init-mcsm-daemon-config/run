@@ -32,6 +32,3 @@ fi
 # permissions
 lsiown -R abc:abc \
     /opt/mcsmanager/daemon
-
-# install
-cd /opt/mcsmanager/daemon && s6-setuidgid abc npm install --production
