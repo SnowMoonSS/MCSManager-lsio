@@ -16,7 +16,7 @@ MCSManager（简称 MCSM）是一款快速部署、分布式架构、多用户�
 本项目将 MCSManager 的容器化方案迁移到 **LinuxServer.io 基础镜像**之上，复用 LinuxServer 社区多年打磨的容器最佳实践。两个核心组件分别使用不同的基础镜像以兼顾稳定性和轻量化：
 
 | 组件 | 基础镜像 | 说明 |
-|------|----------|------|
+| --- | ---------- | ------ |
 | **Web 面板** (`mcsm-web`) | `ghcr.io/linuxserver/baseimage-alpine:3.24` | 基于 Alpine Linux，极致轻量 |
 | **Daemon 守护进程** (`mcsm-daemon`) | `ghcr.io/linuxserver/baseimage-debian:trixie` | 基于 Debian，兼容性更好（内置 JRE 支持） |
 
@@ -37,6 +37,7 @@ s6-overlay 是一个专为容器设计的**轻量级 init 系统**。在传统 D
 - **就绪通知**：通过 `notification-fd` 文件描述符，服务可以在就绪后主动通知 s6，实现精确的就绪探测
 
 本仓库中，s6-overlay 的配置位于：
+
 - `daemon/etc/s6-overlay/s6-rc.d/` — Daemon 端的 init / service 脚本
 - `web/etc/s6-overlay/s6-rc.d/` — Web 端的 init / service 脚本
 
@@ -107,7 +108,7 @@ MCSManager 官方提供 Docker 镜像，源自主仓库 `dockerfile/` 目录下�
 ### 基础镜像对比
 
 | 方面 | 本项目（MCSManager-lsio） | 官方 Docker 镜像 |
-|------|---------------------------|-------------------|
+| --- | --- | --- |
 | **Web 基础镜像** | `ghcr.io/linuxserver/baseimage-alpine:3.24` | `node:lts-alpine` |
 | **Daemon 基础镜像** | `ghcr.io/linuxserver/baseimage-debian:trixie` | `eclipse-temurin:${VER}-jdk`（Debian 系） |
 | **内置 init 系统** | s6-overlay | 无（直接 `CMD node app.js`） |
@@ -118,7 +119,7 @@ MCSManager 官方提供 Docker 镜像，源自主仓库 `dockerfile/` 目录下�
 ### 进程管理方式对比
 
 | | 本项目 | 官方镜像 |
-|--|--------|----------|
+| --- | --- | --- |
 | **PID 1** | s6-svscan 进程管理器 | Node.js 应用进程 |
 | **僵尸进程回收** | s6 自动回收 | 依赖应用自行处理 |
 | **服务守护/自动重启** | s6 管理，异常退出自动拉取 | 依赖 Docker 的 `restart` 策略 |
@@ -130,7 +131,7 @@ MCSManager 官方提供 Docker 镜像，源自主仓库 `dockerfile/` 目录下�
 ### 用户权限模型对比
 
 | | 本项目 | 官方镜像 |
-|--|--------|----------|
+| --- | -------- | ---------- |
 | **默认运行用户** | `abc`（非 root，通过 PUID/PGID 自定义） | `root` |
 | **用户映射方式** | PUID / PGID 环境变量 | 无内置映射（可通过 Docker `--user` 参数） |
 | **卷文件所有权** | 自动归属宿主机用户 | 默认归属 root |
@@ -145,7 +146,7 @@ MCSManager 官方提供 Docker 镜像，源自主仓库 `dockerfile/` 目录下�
 MCSManager Daemon 可以管理 Minecraft 服务器，而 Minecraft 服务端需要 Java 运行环境。两种方案都内置了 Eclipse Temurin Java，且都提供了不同 Java 版本的变体。
 
 | | 本项目 | 官方镜像 |
-|--|--------|----------|
+| --- | -------- | ---------- |
 | **内置 Java** | Eclipse Temurin JRE | Eclipse Temurin JDK |
 | **Java 版本变体** | 5 种（无 JRE / 8 / 11 / 17 / 21 / 25） | 提供多版本（含 jdk8 变体等） |
 | **镜像标签示例** | `latest`, `latest-jre8`, `latest-jre17` 等 | 通过不同镜像名区分版本 |
@@ -166,7 +167,7 @@ volumes:
 ### 扩展性对比
 
 | | 本项目 | 官方镜像 |
-|--|--------|----------|
+| --- | -------- | ---------- |
 | **添加系统包** | Custom Scripts（挂载脚本目录，无需重建） | 修改 Dockerfile + 重建镜像 |
 | **添加 Sidecar 服务** | Custom Services（挂载服务目录） | 额外的 docker-compose 服务 |
 | **社区扩展** | Docker Mods 生态 | 无对等机制 |
@@ -176,7 +177,7 @@ LinuxServer 的三层扩展体系（Scripts → Services → Mods）使得在不
 ### 多架构与发布策略
 
 | | 本项目 | 官方镜像 |
-|--|--------|----------|
+| --- | -------- | ---------- |
 | **amd64 (x86_64)** | ✅ | ✅ |
 | **arm64 (aarch64)** | ✅ | ✅ |
 | **镜像仓库** | GitHub Container Registry (`ghcr.io`) | Docker Hub + GitHub Container Registry (`ghcr.io`) |
@@ -259,6 +260,39 @@ services:
     restart: unless-stopped
 ```
 
+### 同时部署 Web 和 Daemon
+
+```yaml
+services:
+  web:
+    image: ghcr.io/snowmoonss/mcsm-web:latest
+    environment:
+      - PUID=1000       # 宿主机用户 UID
+      - PGID=1000       # 宿主机用户 GID
+      - TZ=Asia/Shanghai
+    ports:
+      - "23333:23333"
+    volumes:
+      - ./web/data:/opt/mcsmanager/web/data
+      - ./web/logs:/opt/mcsmanager/web/logs
+    restart: unless-stopped
+    
+  daemon:
+    image: ghcr.io/snowmoonss/mcsm-daemon:latest
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Shanghai
+      - MCSM_DOCKER_WORKSPACE_PATH=./daemon/data/InstanceData
+    ports:
+      - "24444:24444"
+    volumes:
+      - ./daemon/data:/opt/mcsmanager/daemon/data
+      - ./daemon/logs:/opt/mcsmanager/daemon/logs
+      #- /var/run/docker.sock:/var/run/docker.sock # 如果你打算使用 docker 运行你的应用
+    restart: unless-stopped
+```
+
 > [!CAUTION]
 > 将 `/var/run/docker.sock` 挂载到容器内是十分危险的行为。
 > Docker socket 的本质等同于宿主机 root 权限。容器内任何获得 abc 用户权限的攻击者，都可以通过 Docker socket 逃逸到宿主机并执行任意命令。
@@ -289,7 +323,7 @@ services:
 ## 可用的 JRE 变体标签
 
 | 标签 | JRE 版本 | 适用场景 |
-|------|----------|----------|
+| ------ | ---------- | ---------- |
 | `latest` | 无 JRE | Minecraft 实例将以 Docker 容器的方式运行 |
 | `latest-jdk25` | JRE 25 | Minecraft 26.1+ 及最新版本 |
 | `latest-jdk21` | JRE 21 | Minecraft 1.20 - 1.21 |
@@ -301,8 +335,8 @@ services:
 
 ## 开发与构建
 
-
 ### Web 镜像
+
 ```bash
 docker build -f web.dockerfile \
   --build-arg MCSM_VERSION=v10.16.2 \
@@ -310,6 +344,7 @@ docker build -f web.dockerfile \
 ```
 
 ### Daemon 镜像（默认无 JRE）
+
 ```bash
 docker build -f daemon.dockerfile \
   --build-arg MCSM_VERSION=v10.16.2 \
@@ -317,6 +352,7 @@ docker build -f daemon.dockerfile \
 ```
 
 ### Daemon 镜像（JRE 21）
+
 ```bash
 docker build -f daemon.dockerfile \
   --build-arg MCSM_VERSION=v10.16.2 \
